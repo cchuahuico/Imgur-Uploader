@@ -21,14 +21,14 @@ try:
     import gtk 
 except:
     print "Only GTK compatible systems available for now."
-    sys.exit(5);
+    sys.exit(5)
 
 
-TEMP_DIR = tempfile.getTEMP_DIR()
+TEMP_DIR = tempfile.gettempdir()
 TEMP_FILE = "imgurupx.tmp"
 
 def delete_image():
-   try:
+    try:
         url = open(os.path.join(TEMP_DIR, TEMP_FILE), "r").read()
         webbrowser.open(url)
         # terminate right after opening the browser since 
@@ -49,7 +49,8 @@ def parse_opts():
     parser.add_option("-l", "--large", action="store_true", dest="large",
             help="Get large thumbnail")
     parser.add_option("-d", "--del", action="store_true", dest="delete",
-            help="Delete last uploaded image")
+            help="Delete last uploaded image. Warning: When [-d/--del] is specified, all other" 
+                  " options are ignored.")
 
     (options, args) = parser.parse_args()
 

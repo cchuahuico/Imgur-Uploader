@@ -28,16 +28,20 @@ TEMP_DIR = tempfile.gettempdir()
 TEMP_FILE = "imgurupx.tmp"
 
 def delete_image():
+    # Delete image from server using imgur's API
+    # The image is deleted using a hash stored in a temp file
     try:
-        url = open(os.path.join(TEMP_DIR, TEMP_FILE), "r").read()
-        webbrowser.open(url)
-        # terminate right after opening the browser since 
-        # there is nothing more to be done
+        del_hash = open(os.path.join(TEMP_DIR, TEMP_FILE), "r").read()
+        c = pycurl.Curl()
+        c.setopt(c.URL, "http://imgur.com/api/delete/" + del_hash)
+        c.perform()
+        c.close()
         sys.exit(0)
     except IOError:
         print "Temp file doesn't exist or was deleted. Cannot delete image from server."
 
 def parse_opts(): 
+    # Custom usage message passed to Option Parser
     usage = """usage: %prog [OPTIONS] IMAGE
     OR %prog [-d] to delete latest uploaded image"""
 
@@ -54,14 +58,17 @@ def parse_opts():
 
     (options, args) = parser.parse_args()
 
-    # only one valid positional argument allowed -- the image file path or name
+    # Delete is processed first regardless of its position in the options list. 
+    # Whole program exits regardless of delete results.
+    if options.delete:
+        delete_image()
+ 
+    # Only one valid positional argument allowed -- the image file path or name
     if len(args) != 1:
         parser.error("Please specify one valid filename or path")
     else:
         filename = args[0]
 
-    if options.delete:
-        delete_image()
     # The strings returned are names of xml tags that are part of imgur's response
     # to the request
     if options.small:
@@ -71,9 +78,9 @@ def parse_opts():
     else:
         return ("original_image", filename)
         
-def write_old_link(url):
+def write_hash(delete_hash):
     try:
-        open(os.path.join(TEMP_DIR, TEMP_FILE), "w").write(url)
+        open(os.path.join(TEMP_DIR, TEMP_FILE), "w").write(delete_hash)
     except IOError:
         print "Unable to create temp file."
     
@@ -101,7 +108,7 @@ def main():
     # ie. <original_image>http://www.imgur.com/xYz</original_image>
     img_link = doc.getElementsByTagName(size)[0].firstChild.nodeValue
 
-    write_old_link(doc.getElementsByTagName("delete_page")[0].firstChild.nodeValue)
+    write_hash(doc.getElementsByTagName("delete_hash")[0].firstChild.nodeValue)
     
     clipboard = gtk.clipboard_get()
     clipboard.set_text(img_link)

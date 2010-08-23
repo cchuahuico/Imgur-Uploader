@@ -17,13 +17,6 @@ import tempfile
 import os
 import re
 
-try:
-    import gtk 
-except:
-    print "Only GTK compatible systems available for now."
-    sys.exit(5)
-
-
 TEMP_DIR = tempfile.gettempdir()
 TEMP_FILE = "imgurupx.tmp"
 
@@ -87,7 +80,28 @@ def write_hash(delete_hash):
         open(os.path.join(TEMP_DIR, TEMP_FILE), "w").write(delete_hash)
     except IOError:
         print "Unable to create temp file."
-    
+
+def store_to_clip(img_link):
+    # Only Linux desktop environments based on the gtk toolkit and 
+    # Windows with ActiveState Python installed are supported.
+    try:
+        import gtk
+     
+        clipboard = gtk.clipboard_get()
+        clipboard.set_text(img_link)
+        
+        # store the contents so other applications can also have access to the data
+        clipboard.store()
+    except:
+        try:
+            import win32clipboard
+
+            win32clipboard.OpenClipboard()
+            win32clipboard.SetClipboardData(img_link)
+        except:
+            print "Unable to copy link to clipboard. You do not have any installed \
+                    libraries that this program supports."
+
 def main():
     (size, image_name) = parse_opts()
 
@@ -113,12 +127,8 @@ def main():
     img_link = doc.getElementsByTagName(size)[0].firstChild.nodeValue
 
     write_hash(doc.getElementsByTagName("delete_hash")[0].firstChild.nodeValue)
-    
-    clipboard = gtk.clipboard_get()
-    clipboard.set_text(img_link)
-    
-    # store the contents so other applications can also have access to the data
-    clipboard.store()
+
+    store_to_clip(img_link)
 
 if __name__ == "__main__":
     main()

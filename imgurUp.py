@@ -36,20 +36,17 @@ def parse_opts():
         parser.error("Please specify one valid filename or path")
         sys.exit(4)
     else:
-        filename = args
+        filename = args[0]
 
-    # If none of the options was specified, use original size by default
-    if not any(options):
-        options.orig = True
+    # The string returns are names of xml tags that are part of imgur's response
+    # to the request
+    if options.small:
+        return ("small_thumbnail", filename)
+    elif options.large:
+        return ("large_thumbnail", filename)
     else:
-        # The string returns are names of xml tags that are part of imgur's response
-        # to the request
-        if options.orig:
-            return ("original_image", filename)
-        elif options.small:
-            return ("small_thumbnail", filename)
-        elif options.large:
-            return ("large_thumbnail", filename)
+        return ("original_image", filename)
+        
 
 def main():
     (size, image_name) = parse_opts()

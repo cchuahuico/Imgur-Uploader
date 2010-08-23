@@ -21,8 +21,9 @@ except:
     sys.exit(5);
 
 
-def parse_opts():
-    parser = OptionParser()
+def parse_opts(): 
+    usage = "usage: %prog [OPTIONS] IMAGE" 
+    parser = OptionParser(usage=usage)
     parser.add_option("-o", "--original", action="store_true", dest="orig",
             help="Get original image size")
     parser.add_option("-s", "--small", action="store_true", dest="small",

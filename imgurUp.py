@@ -16,6 +16,7 @@ import sys
 import tempfile
 import os
 import webbrowser
+import re
 
 try:
     import gtk 
@@ -68,6 +69,10 @@ def parse_opts():
         parser.error("Please specify one valid filename or path")
     else:
         filename = args[0]
+
+    # Verify if file specified is an image by checking its extension
+    if not re.search(r"\.(png|jpg|jpeg|gif)$", re.escape(filename), re.IGNORECASE):
+        parser.error("Only valid images allowed - png, jpg, jpeg, or gif")
 
     # The strings returned are names of xml tags that are part of imgur's response
     # to the request

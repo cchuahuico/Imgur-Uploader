@@ -15,7 +15,6 @@ import StringIO
 import sys
 import tempfile
 import os
-import webbrowser
 import re
 
 try:

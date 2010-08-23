@@ -2,7 +2,8 @@
     imgurUp.py - Imgur Uploader
     author: Clarence Chuahuico
     
-    Uploads an image to Imgur and link to original image for viewing is immediately copied to the gtk clipboard
+    Uploads an image to Imgur and link to original image for viewing is immediately copied to
+    the gtk clipboard or win32clipboard
     
     This program was meant to be added in the context menu of image files (.jpg/png/gif) but it 
     can also be used as a command line application. 
@@ -10,12 +11,18 @@
 
 from optparse import OptionParser
 from xml.dom import minidom
-import pycurl
 import StringIO
 import sys
 import tempfile
 import os
 import re
+
+try:
+    import pycurl
+except:
+    print "You need to have pycurl installed. You can get it from: \
+            http://pycurl.sourceforge.net/"
+    sys.exit(2)
 
 TEMP_DIR = tempfile.gettempdir()
 TEMP_FILE = "imgurupx.tmp"

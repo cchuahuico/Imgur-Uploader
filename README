@@ -1,6 +1,0 @@
-Imgur Uploader
-
-Requirements: 
-  - Python 2.5+ / ActiveState Python (if using windows)
-  - pycurl: http://pycurl.sourceforge.net/ 
-  - GTK based desktop manager (for Unix based OS)
